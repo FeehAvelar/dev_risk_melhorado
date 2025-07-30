@@ -5,7 +5,7 @@ namespace RiskProject.Domain
 {
     public class MediumRiskCategory : ICategory
     {
-        public CategoryEnum Category { get => CategoryEnum.HIGHRISK; }
+        public CategoryEnum Category { get => CategoryEnum.MEDIUMRISK; }
 
         public bool ValidateCatagory(ITrade trade, DateTime referenceDate)
         {

@@ -3,10 +3,13 @@ using RiskProject.Domain.Interfaces;
 
 namespace RiskProject.Domain
 {
-    public class ExpiredCategory : ICategory
-    {
-        public CategoryEnum Category { get => CategoryEnum.EXPIRED; }
-        public bool ValidateCatagory(ITrade trade, DateTime referenceDate)
+    public class ExpiredCategory : CategoryValidate
+    {        
+        public ExpiredCategory() : base(CategoryEnum.EXPIRED, priority: 0) 
+        {
+        }
+        
+        public override bool ValidateCatagory(ITrade trade, DateTime referenceDate)
         {
             var dateExpired = trade.NextPaymentDate.AddDays(30);
 

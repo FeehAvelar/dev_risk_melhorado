@@ -17,7 +17,7 @@ var categoryTypes = assembly
 
 foreach (var type in categoryTypes)
 {
-    services.AddScoped(typeof(ICategory), type);
+    services.AddSingleton(typeof(ICategory), type);
 }
 
 services.AddScoped<TraderService>();
@@ -27,9 +27,10 @@ var serviceProvider = services.BuildServiceProvider();
 
 
 #region program
-var inputedReferenceDate = DateTime.ParseExact(Console.ReadLine().Trim(), "MM/dd/yyyy", CultureInfo.InvariantCulture);
-
+var inputedReferenceDate = new PaymentDateObjectValue(Console.ReadLine().Trim());
+//var inputedReferenceDate = new PaymentDateObjectValue("12/11/2020");
 var numberOfOpereations = uint.Parse(Console.ReadLine());
+//var numberOfOpereations = 4;
 
 ITrade[] trades = new ITrade[numberOfOpereations];
 for (int i = 0; i < numberOfOpereations; i++)
@@ -39,13 +40,15 @@ for (int i = 0; i < numberOfOpereations; i++)
     trades[i] = trader;
 }
 
+//ITrade[] trades = new ITrade[] { new Trade("2000000 Private 12/29/2025"), new Trade("400000 Public 07/01/2020"), new Trade("5000000 Public 01/02/2024"), new Trade("3000000 Public 10/26/2023") };
+
 using (var scope = serviceProvider.CreateScope())
 {
     var service = scope.ServiceProvider.GetRequiredService<TraderService>(); 
     
     foreach (var trade in trades)
     {
-        var tradeCategory = service.ClassifyCategory(trade, inputedReferenceDate);
+        var tradeCategory = service.ClassifyCategory(trade, inputedReferenceDate.Value);
         Console.WriteLine(tradeCategory);
     }
 }

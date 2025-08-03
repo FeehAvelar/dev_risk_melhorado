@@ -3,10 +3,13 @@ using RiskProject.Domain.Interfaces;
 
 namespace RiskProject.Domain
 {
-    public class HighRiskCategory : ICategory
+    public class HighRiskCategory : CategoryValidate
     {
-        public CategoryEnum Category { get => CategoryEnum.HIGHRISK; }
-        public bool ValidateCatagory(ITrade trade, DateTime referenceDate)
+        public HighRiskCategory() : base(CategoryEnum.HIGHRISK, priority: 1)
+        {
+        }
+
+        public override bool ValidateCatagory(ITrade trade, DateTime referenceDate)
         {
             return trade.Value > 1_000_000 && trade.ClientSectorEnum == ClientSectorEnum.PRIVATE;
         }

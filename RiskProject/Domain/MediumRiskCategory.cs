@@ -3,14 +3,15 @@ using RiskProject.Domain.Interfaces;
 
 namespace RiskProject.Domain
 {
-    public class MediumRiskCategory : ICategory
+    public class MediumRiskCategory : CategoryValidate
     {
-        public CategoryEnum Category { get => CategoryEnum.MEDIUMRISK; }
+        public MediumRiskCategory() : base(CategoryEnum.MEDIUMRISK, priority: 2)
+        {
+        }
 
-        public bool ValidateCatagory(ITrade trade, DateTime referenceDate)
+        public override bool ValidateCatagory(ITrade trade, DateTime referenceDate)
         {
             return trade.Value > 1_000_000 && trade.ClientSectorEnum == ClientSectorEnum.PUBLIC;
-        }
+        }        
     }
-
 }

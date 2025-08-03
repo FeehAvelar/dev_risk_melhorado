@@ -1,11 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using RiskProject.Domain;
 using RiskProject.Domain.Enum;
 using RiskProject.Domain.Interfaces;
 using RiskProject.Services;
 using System.Reflection;
-using Xunit;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace RiskProjectTests
 {
@@ -54,7 +53,6 @@ namespace RiskProjectTests
                         
             var result = _fixture._traderService.ClassifyCategory(trade, referenceDate);
 
-            // Assert
             Assert.Equal(CategoryEnum.EXPIRED, result);
         }
 
@@ -73,7 +71,6 @@ namespace RiskProjectTests
 
             var result = _fixture._traderService.ClassifyCategory(trade, referenceDate);
 
-            // Assert
             Assert.Equal(CategoryEnum.HIGHRISK, result);
         }
 
@@ -91,7 +88,6 @@ namespace RiskProjectTests
 
             var result = _fixture._traderService.ClassifyCategory(trade, referenceDate);
 
-            // Assert
             Assert.Equal(CategoryEnum.MEDIUMRISK, result);
         }
 
@@ -108,9 +104,40 @@ namespace RiskProjectTests
             var referenceDate = DateTime.Today;
 
             var result = _fixture._traderService.ClassifyCategory(trade, referenceDate);
-
-            // Assert
+                        
             Assert.Equal(CategoryEnum.UNDEFINED, result);
+        }
+        
+        [Theory]
+        [InlineData(
+            "12/11/2020",
+            new string[] {
+                "2000000 Private 12/29/2025",
+                "400000 Public 07/01/2020",
+                "5000000 Public 01/02/2024",
+                "3000000 Public 10/26/2023" 
+            }, 
+            new CategoryEnum[] { 
+                CategoryEnum.HIGHRISK, 
+                CategoryEnum.EXPIRED, 
+                CategoryEnum.MEDIUMRISK, 
+                CategoryEnum.MEDIUMRISK 
+            }
+        )]
+        public void ClassifyCategory_ShouldHandleMultipleTradesCorrectly(string inputedDate, string[] inputedTrades, CategoryEnum[] expectedCategories)
+        {
+            var date = new PaymentDateObjectValue(inputedDate);
+
+            var trades = new List<ITrade>();
+            var validatedCategories = new List<CategoryEnum>();
+            foreach (var tradeStr in inputedTrades)
+            {
+                var trade = new Trade(tradeStr);
+
+                validatedCategories.Add(_fixture._traderService.ClassifyCategory(trade, date.Value));                
+            }
+
+            Assert.Equal(expectedCategories, validatedCategories);
         }
     }
 }

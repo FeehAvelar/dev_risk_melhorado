@@ -9,17 +9,17 @@ namespace RiskProject.Services
 
         public TraderService(IEnumerable<ICategory> categories)
         {
-            _categories = categories;
+            _categories = categories.OrderBy(cat => cat is ICategoryPriority categoryPriority ? categoryPriority.Priority : int.MaxValue);
         }
 
         public CategoryEnum ClassifyCategory(ITrade trade, DateTime referenceDate)
-        {            
+        {
             foreach (var category in _categories)
             {
                 if (category.ValidateCatagory(trade, referenceDate))
                     return category.Category;
             }
-            
+
             return CategoryEnum.UNDEFINED;
         }
     }
